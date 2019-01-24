@@ -7,14 +7,15 @@
  * and the Eclipse Distribution License is available at
  * http://www.eclipse.org/org/documents/edl-v10.php.
  */
-
 package org.eclipse.collections.companykata;
 
+import java.util.List;
 import org.eclipse.collections.api.block.function.Function;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.set.MutableSet;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Sets;
+import org.eclipse.collections.impl.list.mutable.FastList;
 import org.eclipse.collections.impl.test.Verify;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,18 +26,17 @@ import org.junit.Test;
  * {@link MutableList#flatCollect(Function)}<br>
  * {@link MutableList#collect(Function)}<br>
  *
- * @see <a href="http://eclipse.github.io/eclipse-collections-kata/company-kata/#/8">Exercise 3 Slides</a>
+ * @see
+ * <a href="http://eclipse.github.io/eclipse-collections-kata/company-kata/#/8">Exercise
+ * 3 Slides</a>
  */
-public class Exercise3Test extends CompanyDomainForKata
-{
+public class Exercise3Test extends CompanyDomainForKata {
+
     /**
      * Improve {@link Company#getOrders()} without breaking this test.
      */
     @Test
-    public void improveGetOrders()
-    {
-        // Delete this line - it's a reminder
-        Assert.fail("Improve getOrders() without breaking this test");
+    public void improveGetOrders() {
         Verify.assertSize(5, this.company.getOrders());
     }
 
@@ -44,10 +44,12 @@ public class Exercise3Test extends CompanyDomainForKata
      * Get all items that have been ordered by anybody.
      */
     @Test
-    public void findItemNames()
-    {
-        MutableList<LineItem> allOrderedLineItems = null;
-        MutableSet<String> actualItemNames = null;
+    public void findItemNames() {
+        Function<Order,List<LineItem>> lineItemFunction = Order::getLineItems;
+        
+        MutableList<LineItem> allOrderedLineItems = company.getOrders().flatCollect(lineItemFunction);
+        Function<LineItem, String> nameFunction = LineItem::getName;
+        MutableSet<String> actualItemNames = allOrderedLineItems.collect(nameFunction).toSet();
 
         Verify.assertInstanceOf(MutableSet.class, actualItemNames);
         Verify.assertInstanceOf(String.class, actualItemNames.getFirst());
@@ -59,9 +61,9 @@ public class Exercise3Test extends CompanyDomainForKata
     }
 
     @Test
-    public void findCustomerNames()
-    {
-        MutableList<String> names = null;
+    public void findCustomerNames() {
+        Function<Customer, String> nameFunction = Customer::getName;
+        MutableList<String> names = company.getCustomers().collect(nameFunction);
 
         MutableList<String> expectedNames = Lists.mutable.with("Fred", "Mary", "Bill");
         Assert.assertEquals(expectedNames, names);

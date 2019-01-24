@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!DOCTYPE actions SYSTEM "action-mapping.dtd">
+<actions>
+    <action name="custom-1" displayName="test">
+        <args>--configure-on-demand -w -x check test</args>
+    </action>
+</actions>

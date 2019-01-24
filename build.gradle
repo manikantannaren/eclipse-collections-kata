@@ -15,19 +15,19 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 
 subprojects {
-  apply plugin: 'java'
-  apply plugin: 'idea'
-  apply plugin: 'idea'
-  apply plugin: 'eclipse'
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'idea'
+    apply plugin: 'eclipse'
 
-  repositories {
-    mavenCentral()
-  }
+    repositories {
+        mavenCentral()
+    }
 
-  dependencies {
-    compile 'org.eclipse.collections:eclipse-collections-api:9.2.0'
-    compile 'org.eclipse.collections:eclipse-collections:9.2.0'
-    testCompile 'org.eclipse.collections:eclipse-collections-testutils:9.2.0'
-    compile 'junit:junit:4.12'
-  }
+    dependencies {
+        compile 'org.eclipse.collections:eclipse-collections-api:9.2.0'
+        compile 'org.eclipse.collections:eclipse-collections:9.2.0'
+        testCompile 'org.eclipse.collections:eclipse-collections-testutils:9.2.0'
+        compile 'junit:junit:4.12'
+    }
 }

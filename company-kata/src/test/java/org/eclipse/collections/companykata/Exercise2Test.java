@@ -7,7 +7,6 @@
  * and the Eclipse Distribution License is available at
  * http://www.eclipse.org/org/documents/edl-v10.php.
  */
-
 package org.eclipse.collections.companykata;
 
 import org.eclipse.collections.api.block.function.Function;
@@ -38,17 +37,21 @@ import org.junit.Test;
  * {@link MutableList#reject(Predicate)}<br>
  * {@link MutableList#rejectWith(Predicate2, Object)}<br>
  *
- * @see <a href="http://eclipse.github.io/eclipse-collections-kata/company-kata/#/3">Exercise 2 Slides</a>
+ * @see
+ * <a href="http://eclipse.github.io/eclipse-collections-kata/company-kata/#/3">Exercise
+ * 2 Slides</a>
  */
-public class Exercise2Test extends CompanyDomainForKata
-{
+public class Exercise2Test extends CompanyDomainForKata {
+
     /**
-     * Set up a {@link Predicate} that tests to see if a {@link Customer}'s city is "London".
+     * Set up a {@link Predicate} that tests to see if a {@link Customer}'s city
+     * is "London".
      */
     @Test
-    public void customerFromLondonPredicate()
-    {
-        Predicate<Customer> predicate = null;
+    public void customerFromLondonPredicate() {
+        Predicate<Customer> predicate = (customer) -> {
+            return customer.getCity().equalsIgnoreCase("london");
+        };
         String predicateClass = predicate.getClass().getSimpleName();
         Assert.assertTrue(
                 "Solution should use Predicates.attributeEquals() or a lambda but used " + predicateClass,
@@ -62,70 +65,82 @@ public class Exercise2Test extends CompanyDomainForKata
     }
 
     @Test
-    public void doAnyCustomersLiveInLondon()
-    {
-        boolean anyCustomersFromLondon = false;
+    public void doAnyCustomersLiveInLondon() {
+        MutableList<Customer> customersFromLondon = company.getCustomers().selectWith(getCityPredicate(), "london");
+        boolean anyCustomersFromLondon = customersFromLondon.size() != 0;
         Assert.assertTrue(anyCustomersFromLondon);
     }
 
     @Test
-    public void doAllCustomersLiveInLondon()
-    {
-        boolean allCustomersFromLondon = true;
-        Assert.assertFalse(allCustomersFromLondon);
+    public void doAllCustomersLiveInLondon() {
+        MutableList<Customer> customersFromLondon = company.getCustomers().selectWith(getCityPredicate(), "london");
+        boolean allCustomersFromLondon = customersFromLondon.size() != 3;
+        Assert.assertTrue(allCustomersFromLondon);
     }
 
     @Test
-    public void howManyCustomersLiveInLondon()
-    {
-        int numberOfCustomerFromLondon = 0;
+    public void howManyCustomersLiveInLondon() {
+        MutableList<Customer> customersFromLondon = company.getCustomers().selectWith(getCityPredicate(), "london");
+        int numberOfCustomerFromLondon = customersFromLondon.size();
         Assert.assertEquals("Should be 2 London customers", 2, numberOfCustomerFromLondon);
     }
 
     @Test
-    public void getLondonCustomers()
-    {
-        MutableList<Customer> customersFromLondon = null;
+    public void getLondonCustomers() {
+        MutableList<Customer> customersFromLondon = company.getCustomers().selectWith(getCityPredicate(), "london");
         Verify.assertSize("Should be 2 London customers", 2, customersFromLondon);
     }
 
     @Test
-    public void getCustomersWhoDontLiveInLondon()
-    {
-        MutableList<Customer> customersNotFromLondon = null;
+    public void getCustomersWhoDontLiveInLondon() {
+        MutableList<Customer> customersNotFromLondon = company.getCustomers().selectWith(getNotInCityPredicate(), "london");;
         Verify.assertSize("customers not from London", 1, customersNotFromLondon);
     }
 
     /**
-     * Which customers come from London? Which customers do not come from London? Get a collection of both in a single pass.
+     * Which customers come from London? Which customers do not come from
+     * London? Get a collection of both in a single pass.
      */
     @Test
-    public void getCustomersWhoDoAndDoNotLiveInLondon()
-    {
-        PartitionMutableList<Customer> customers = null;
+    public void getCustomersWhoDoAndDoNotLiveInLondon() {
+        PartitionMutableList<Customer> customers = company.getCustomers().partitionWith(getCityPredicate(), "london");
         Verify.assertSize("Should be 2 London customers", 2, customers.getSelected());
         Verify.assertSize("customers not from London", 1, customers.getRejected());
     }
 
     /**
-     * Implement {@link Company#getCustomerNamed(String)} and get this test to pass.
+     * Implement {@link Company#getCustomerNamed(String)} and get this test to
+     * pass.
      */
     @Test
-    public void findMary()
-    {
+    public void findMary() {
         Customer mary = this.company.getCustomerNamed("Mary");
         Assert.assertEquals("customer's name should be Mary", "Mary", mary.getName());
     }
 
     /**
-     * Implement {@link Company#getCustomerNamed(String)} and get this test to pass.
+     * Implement {@link Company#getCustomerNamed(String)} and get this test to
+     * pass.
      */
     @Test
-    public void findPete()
-    {
+    public void findPete() {
         Customer pete = this.company.getCustomerNamed("Pete");
         Assert.assertNull(
                 "Should be null as there is no customer called Pete",
                 pete);
+    }
+
+    private Predicate2<Customer, String> getCityPredicate() {
+        Predicate2<Customer, String> cityPredicate = (customer, city) -> {
+            return customer.getCity().equalsIgnoreCase(city);
+        };
+        return cityPredicate;
+    }
+    private Predicate2<Customer, String> getNotInCityPredicate(){
+        Predicate2<Customer, String> cityPredicate = (customer, city) -> {
+            return !customer.getCity().equalsIgnoreCase(city);
+        };
+        return cityPredicate;
+
     }
 }

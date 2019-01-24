@@ -7,43 +7,41 @@
  * and the Eclipse Distribution License is available at
  * http://www.eclipse.org/org/documents/edl-v10.php.
  */
-
 package org.eclipse.collections.companykata;
 
+import java.util.List;
 import org.eclipse.collections.api.block.function.Function;
 import org.eclipse.collections.api.block.predicate.Predicate;
+import org.eclipse.collections.api.block.predicate.Predicate2;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.impl.list.mutable.FastList;
 import org.junit.Assert;
 
 /**
- * A company has a {@link MutableList} of {@link Customer}s.  It has an array of {@link Supplier}s, and a name.
+ * A company has a {@link MutableList} of {@link Customer}s. It has an array of
+ * {@link Supplier}s, and a name.
  */
-public class Company
-{
+public class Company {
+
     private final String name;
     private final MutableList<Customer> customers = FastList.newList();
 
     // Suppliers are array based. Refactor to a MutableList<Supplier>
     private Supplier[] suppliers = new Supplier[0];
 
-    public Company(String name)
-    {
+    public Company(String name) {
         this.name = name;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
-    public void addCustomer(Customer aCustomer)
-    {
+    public void addCustomer(Customer aCustomer) {
         this.customers.add(aCustomer);
     }
 
-    public MutableList<Customer> getCustomers()
-    {
+    public MutableList<Customer> getCustomers() {
         return this.customers;
     }
 
@@ -52,28 +50,22 @@ public class Company
      *
      * @see org.eclipse.collections.api.RichIterable#flatCollect(Function)
      */
-    public MutableList<Order> getOrders()
-    {
-        Assert.fail("Refactor this code to use Eclipse Collections as part of Exercise 3");
-        MutableList<Order> orders = FastList.newList();
-        for (Customer customer : this.customers)
-        {
-            orders.addAll(customer.getOrders());
-        }
+    public MutableList<Order> getOrders() {
+        Function<Customer,List<Order>> lineItemFunction = Customer::getOrders;
+        MutableList<Order> orders = customers.flatCollect(lineItemFunction);
         return orders;
     }
 
-    public Customer getMostRecentCustomer()
-    {
+    public Customer getMostRecentCustomer() {
         return this.customers.getLast();
     }
 
     /**
      * Simplify after refactoring to use a MutableList&lt;Supplier&gt;.
+     *
      * @param supplier
      */
-    public void addSupplier(Supplier supplier)
-    {
+    public void addSupplier(Supplier supplier) {
         // need to replace the current array of suppliers with another, larger array
         // Of course, normally one would not use an array.
 
@@ -83,20 +75,27 @@ public class Company
         this.suppliers[this.suppliers.length - 1] = supplier;
     }
 
-    public Supplier[] getSuppliers()
-    {
+    public Supplier[] getSuppliers() {
         return this.suppliers;
     }
 
     /**
-     * Remove the Assert.fail() and replace the null with an appropriate implementation.
-     * Use a {@link Predicate} to find a {@link Customer} with the name given.
+     * Remove the Assert.fail() and replace the null with an appropriate
+     * implementation. Use a {@link Predicate} to find a {@link Customer} with
+     * the name given.
      *
      * @see org.eclipse.collections.api.RichIterable#flatCollect(Function)
      */
-    public Customer getCustomerNamed(String name)
-    {
-        Assert.fail("Implement this method as part of Exercise 2");
-        return null;
+    public Customer getCustomerNamed(String name) {
+        return getCustomers().detectWith(getNamedCustomerPredicate(), name);
     }
+
+    private Predicate2<Customer, String> getNamedCustomerPredicate() {
+        Predicate2<Customer, String> namePredicate = (customer, name) -> {
+            return customer.getName().equalsIgnoreCase(name);
+        };
+        return namePredicate;
+
+    }
+
 }
